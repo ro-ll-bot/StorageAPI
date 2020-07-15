@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class ShareInformation {
+public class OSSShare {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
