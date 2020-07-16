@@ -1,6 +1,6 @@
 package com.rollbot.fileapi.endpoints;
 
-import com.rollbot.fileapi.services.FileService;
+import com.rollbot.fileapi.services.OSSFileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 // @RequestMapping("")
 public class FileController {
 
-    private FileService fileService;
+    private OSSFileService OSSFileService;
 
     @PostMapping("/file")
     public ResponseEntity<String> uploadFile(@RequestPart("file") MultipartFile file){
