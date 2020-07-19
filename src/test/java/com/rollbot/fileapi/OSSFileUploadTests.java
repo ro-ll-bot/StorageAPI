@@ -32,6 +32,9 @@ public class OSSFileUploadTests {
   private String filename = null;
   private byte[] content = null;
   private OSSFile ossFile = null;
+  private static final int userId = 1;
+  private static final String description = null;
+  private String bucket = "bucket_"+userId+"/";
   // Internal test upload file directory
   private String internalTestUploadFileDirectory = ossFileService.internalFilePath;
 
@@ -81,7 +84,7 @@ public class OSSFileUploadTests {
   @AfterEach
   public void deleteTestResources(){
     // Delete all stuff generated to test this class.
-    File uploadedFile = new File(internalTestUploadFileDirectory+filename);
+    File uploadedFile = new File(internalTestUploadFileDirectory+bucket+filename);
 
     Assert.isTrue(uploadedFile.exists(), "Uploaded file not exists");
     logger.info("File found at the location: "+uploadedFile.getAbsolutePath());
@@ -157,18 +160,18 @@ public class OSSFileUploadTests {
     }
     // Instead of testing upload service via http triggers.
     // Test this functionality via FileService.
-    this.ossFile = this.ossFileService.uploadFile(multipartFile);
+    this.ossFile = this.ossFileService.uploadFile(multipartFile, userId, description);
     Assert.notNull(this.ossFile,"File couldn't upload to server.");
 
     // Now check the uploaded file
-    File uploadedFile = new File(this.internalTestUploadFileDirectory + this.filename);
+    File uploadedFile = new File(this.internalTestUploadFileDirectory + this.bucket+ this.filename);
     Assert.isTrue(uploadedFile.exists(), "File upload process couldn't accomplished. There is no file created at /${this.internatlTest}/$[fname]");
 
     // Read uploaded file.
     byte[] uploadedFileContent = null;
     String uploadedFileName = null;
     try {
-      Pair<String, byte[]> uploadedFilePair = readFileBytes(this.internalTestUploadFileDirectory + this.filename);
+      Pair<String, byte[]> uploadedFilePair = readFileBytes(this.internalTestUploadFileDirectory + this.bucket+ this.filename);
       Assert.notNull(uploadedFilePair, "Uploaded file pair is null");
       uploadedFileName = uploadedFilePair.getKey();
       logger.info("Uploaded File name: " + uploadedFileName+", Actual file name: "+this.filename );
@@ -204,7 +207,7 @@ public class OSSFileUploadTests {
     }
     // Instead of testing upload service via http triggers.
     // Test this functionality via FileService.
-    this.ossFile = this.ossFileService.uploadFile(multipartFile);
+    this.ossFile = this.ossFileService.uploadFile(multipartFile, userId, description);
     Assert.notNull(this.ossFile,"File couldn't upload to server.");
 
     OSSFile fromDB = null;
