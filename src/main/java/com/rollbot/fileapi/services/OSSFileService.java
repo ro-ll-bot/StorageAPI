@@ -6,6 +6,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 public interface OSSFileService {
 
     String internalFilePath = "storage/oss/files/";
@@ -14,4 +16,5 @@ public interface OSSFileService {
     ResponseEntity<Resource> downloadFile(int userId, String filename);
     // Configure it for shared files.
     OSSFile downloadFile(String uri);
+    List<OSSFile> getDownloadedFiles(int userId);
 }

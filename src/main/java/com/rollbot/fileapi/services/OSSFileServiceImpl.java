@@ -2,11 +2,12 @@ package com.rollbot.fileapi.services;
 
 import com.rollbot.fileapi.entity.OSSFile;
 import com.rollbot.fileapi.repositories.OSSFileRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -18,16 +19,16 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 @Configurable
 @Service
 public class OSSFileServiceImpl implements OSSFileService {
 
     @Autowired private OSSFileRepository fileRepository;
-    private final Logger logger = Logger.getLogger(this.getClass().getName());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String createBucketIfNotExits(int userId)  {
         String bucket = "bucket_"+userId;
@@ -44,12 +45,11 @@ public class OSSFileServiceImpl implements OSSFileService {
     public OSSFile uploadFile(MultipartFile file, int userId,
                               @Nullable String description) {
 
-        logger.setLevel(Level.ALL);
-        logger.info("Original file name: " + file.getOriginalFilename());
-        logger.info("Is file empty: " + file.isEmpty());
-        logger.info("Content Type from multipart: " +  file.getContentType());
-        logger.info("Description: " + file.getResource().getDescription());
-        logger.info("Filename: " + file.getResource().getFilename());
+        logger.debug("Original file name: " + file.getOriginalFilename());
+        logger.debug("Is file empty: " + file.isEmpty());
+        logger.debug("Content Type from multipart: " +  file.getContentType());
+        logger.debug("Description: " + file.getResource().getDescription());
+        logger.debug("Filename: " + file.getResource().getFilename());
 
         if(file.getOriginalFilename()==null || file.isEmpty() || file.getName()==null) return null;
 
@@ -65,12 +65,12 @@ public class OSSFileServiceImpl implements OSSFileService {
             if(bytes==null) return null;
 
 
-            logger.info("Write file to path: "+fPath);
+            logger.debug("Write file to path: "+fPath);
             Path path = Paths.get(fPath);
             Files.write(path, bytes);
         } catch (IOException e) {
             e.printStackTrace();
-            logger.info("File writing process couldn't completed!");
+            logger.warn("File writing process couldn't completed!");
             return null;
         }
 
@@ -84,7 +84,7 @@ public class OSSFileServiceImpl implements OSSFileService {
             logger.info("Mime type found: "+ mimeType);
         } catch (IOException e) {
             e.printStackTrace();
-            logger.info("MimeType couldn't find of the file.");
+            logger.warn("MimeType couldn't find of the file.");
         }
 
         String []splitted = file.getName().split("[.]");
@@ -146,5 +146,15 @@ public class OSSFileServiceImpl implements OSSFileService {
     @Override
     public OSSFile downloadFile(String uri) {
         return null;
+    }
+
+    @Override
+    public List<OSSFile> getDownloadedFiles(int userId) {
+        // So simple, I don't know at that moment but we can check some stuff here maybe.
+        List<OSSFile> ossFiles = fileRepository.findAllByUserId(userId);
+
+        // Also load the shared files too.
+        // TODO: [Decide this] -> Load shared files from a different method.
+        return ossFiles;
     }
 }
