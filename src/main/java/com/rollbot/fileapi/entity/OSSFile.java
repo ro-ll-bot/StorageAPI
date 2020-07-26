@@ -15,14 +15,18 @@ public class OSSFile implements Serializable {
     private Integer userId;
     private long size;
     private String name, description;
+    private String mimeType;
+
+    @Column(unique= true)
     private String filePath;
     private String absoluteFilePath;
+
     private Date uploadTime, createTime, updateTime;
     // private TrustedFileType fileType;
     private String extension;
 
-    @OneToMany
-    private Set<OSSShare> shared;
+    // @OneToMany
+    // private Set<OSSShare> shared;
 
 
 
@@ -70,8 +74,9 @@ public class OSSFile implements Serializable {
         return extension;
     }
 
-    public Set<OSSShare> getShared() {
-        return shared;
+
+    public String getMimeType() {
+        return mimeType;
     }
 
     @Override
@@ -89,8 +94,7 @@ public class OSSFile implements Serializable {
                 Objects.equals(uploadTime.getTime(), ossFile.uploadTime.getTime()) &&
                 Objects.equals(createTime.getTime(), ossFile.createTime.getTime()) &&
                 Objects.equals(updateTime==null?null:updateTime.getTime(), ossFile.updateTime==null?null:ossFile.updateTime.getTime()) &&
-                Objects.equals(extension, ossFile.extension) &&
-                Objects.equals(shared, ossFile.shared);
+                Objects.equals(extension, ossFile.extension);
     }
 
 
@@ -127,6 +131,7 @@ public class OSSFile implements Serializable {
         }
 
         public Builder description(String description){
+            if(description==null) description= "";
             this.file.description = description;
             return this;
         }
@@ -136,8 +141,30 @@ public class OSSFile implements Serializable {
             return this;
         }
 
+        public Builder mimeType(String mimeType){
+            this.file.mimeType = mimeType;
+            return this;
+        }
+
         public OSSFile build(){
             return this.file;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "OSSFile{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", size=" + size +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", mimeType='" + mimeType + '\'' +
+                ", filePath='" + filePath + '\'' +
+                ", absoluteFilePath='" + absoluteFilePath + '\'' +
+                ", uploadTime=" + uploadTime +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", extension='" + extension + '}';
     }
 }

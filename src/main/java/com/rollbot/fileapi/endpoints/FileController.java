@@ -1,40 +1,37 @@
+
 package com.rollbot.fileapi.endpoints;
 
+import com.rollbot.fileapi.entity.OSSFile;
 import com.rollbot.fileapi.services.OSSFileService;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
 
 @RestController
-// @RequestMapping("")
+@RequestMapping("api/file-service/")
 public class FileController {
 
-    private OSSFileService OSSFileService;
+    @Autowired private OSSFileService ossFileService;
 
-    @PostMapping("/file")
-    public ResponseEntity<String> uploadFile(@RequestPart("file") MultipartFile file){
+    @PostMapping("upload-file")
+    public OSSFile uploadFile(@RequestParam MultipartFile multipartFile,
+                              @RequestParam int userId,
+                              @RequestParam(defaultValue = "null") String description){
+        if(description.equals("null")){}
 
-
-        if(file.getOriginalFilename() == null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        try{
-            byte[] bytes = file.getBytes();
-            Path path = Paths.get(file.getOriginalFilename());
-            Files.write(path, bytes);
-            System.out.println("File Name:"+ path.getFileName());
-
-        }catch (IOException e){
-            e.printStackTrace();
-        }
-
-        return new ResponseEntity<>("Good job!", HttpStatus.OK);
+        OSSFile file = ossFileService.uploadFile(multipartFile, userId, description);
+        return file;
     }
+
+    @GetMapping("download-file/{filename:.+}")
+    //@Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public ResponseEntity<Resource> downloadFile(@PathVariable String filename){
+        return ossFileService.downloadFile(1, filename);
+    }
+
 }
