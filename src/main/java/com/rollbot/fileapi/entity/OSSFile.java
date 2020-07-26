@@ -25,8 +25,8 @@ public class OSSFile implements Serializable {
     // private TrustedFileType fileType;
     private String extension;
 
-    @OneToMany
-    private Set<OSSShare> shared;
+    // @OneToMany
+    // private Set<OSSShare> shared;
 
 
 
@@ -74,9 +74,6 @@ public class OSSFile implements Serializable {
         return extension;
     }
 
-    public Set<OSSShare> getShared() {
-        return shared;
-    }
 
     public String getMimeType() {
         return mimeType;
@@ -97,8 +94,7 @@ public class OSSFile implements Serializable {
                 Objects.equals(uploadTime.getTime(), ossFile.uploadTime.getTime()) &&
                 Objects.equals(createTime.getTime(), ossFile.createTime.getTime()) &&
                 Objects.equals(updateTime==null?null:updateTime.getTime(), ossFile.updateTime==null?null:ossFile.updateTime.getTime()) &&
-                Objects.equals(extension, ossFile.extension) &&
-                Objects.equals(shared, ossFile.shared);
+                Objects.equals(extension, ossFile.extension);
     }
 
 
@@ -169,8 +165,6 @@ public class OSSFile implements Serializable {
                 ", uploadTime=" + uploadTime +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
-                ", extension='" + extension + '\'' +
-                ", shared=" + shared +
-                '}';
+                ", extension='" + extension + '}';
     }
 }

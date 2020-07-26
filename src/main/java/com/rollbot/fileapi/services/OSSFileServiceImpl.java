@@ -1,13 +1,16 @@
 package com.rollbot.fileapi.services;
 
 import com.rollbot.fileapi.entity.OSSFile;
+import com.rollbot.fileapi.entity.OSSShared;
 import com.rollbot.fileapi.repositories.OSSFileRepository;
+import com.rollbot.fileapi.repositories.OSSShareRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
@@ -28,6 +31,7 @@ import java.util.Optional;
 public class OSSFileServiceImpl implements OSSFileService {
 
     @Autowired private OSSFileRepository fileRepository;
+    @Autowired private OSSShareRepository shareRepository;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private String createBucketIfNotExits(int userId)  {
@@ -135,7 +139,12 @@ public class OSSFileServiceImpl implements OSSFileService {
 
         ByteArrayResource resource = new ByteArrayResource(bytes);
 
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("content-disposition", "inline; filename=\""+ossFile.getName()+"\"");
+        httpHeaders.set("content-length", String.valueOf(f.length()));
+
         ResponseEntity<Resource> responseEntity = ResponseEntity.ok()
+                .headers(httpHeaders)
                 .contentLength(f.length())
                 .contentType(MediaType.asMediaType(MimeType.valueOf(ossFile.getMimeType())))
                 .body(resource);
@@ -144,17 +153,18 @@ public class OSSFileServiceImpl implements OSSFileService {
     }
 
     @Override
-    public OSSFile downloadFile(String uri) {
+    public ResponseEntity<Resource> downloadSharedFile(int userId, String filename) {
         return null;
     }
 
     @Override
-    public List<OSSFile> getDownloadedFiles(int userId) {
-        // So simple, I don't know at that moment but we can check some stuff here maybe.
-        List<OSSFile> ossFiles = fileRepository.findAllByUserId(userId);
-
-        // Also load the shared files too.
-        // TODO: [Decide this] -> Load shared files from a different method.
-        return ossFiles;
+    public List<OSSFile> listFiles(int userId) {
+        return fileRepository.findAllByUserId(userId);
     }
+
+    @Override
+    public List<OSSShared> listSharedFiles(int sharedUserId) {
+        return shareRepository.findAllBySharedUserId(sharedUserId);
+    }
+
 }

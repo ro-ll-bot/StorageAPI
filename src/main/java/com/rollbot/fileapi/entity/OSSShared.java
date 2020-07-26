@@ -7,27 +7,33 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
-public class OSSShare {
+public class OSSShared {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    private Integer userId;
+    private Integer sharedUserId;
+    private Integer ownerUserId;
     private String title;
     private String description;
     private boolean sendMail;
     // private boolean update;
     private Date expireTime;
     private String shareUrl;
+    private OSSFile sharedFile;
 
 
     public Integer getId() {
         return id;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getOwnerUserId() {
+        return ownerUserId;
+    }
+
+    public Integer getSharedUserId() {
+        return sharedUserId;
     }
 
     public String getTitle() {
@@ -48,5 +54,9 @@ public class OSSShare {
 
     public String getShareUrl() {
         return shareUrl;
+    }
+
+    public OSSFile getSharedFile() {
+        return sharedFile;
     }
 }

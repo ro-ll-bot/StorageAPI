@@ -11,4 +11,11 @@ import java.util.Optional;
 public interface OSSFileRepository extends JpaRepository<OSSFile, Integer> {
   Optional<OSSFile> findByFilePath(String filePath);
   List<OSSFile> findAllByUserId(int userId);
+
+  // First of all find the user id's here.
+  // Than with that information get the user informations.
+  // Maybe you can create user information table here with
+  // a little bit of information.
+  // Also find non-expired files.
+  //List<OSSFile> sharedFileWithUserInformation();
 }

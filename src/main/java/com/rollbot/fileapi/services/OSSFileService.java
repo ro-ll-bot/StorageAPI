@@ -1,6 +1,7 @@
 package com.rollbot.fileapi.services;
 
 import com.rollbot.fileapi.entity.OSSFile;
+import com.rollbot.fileapi.entity.OSSShared;
 import com.sun.istack.Nullable;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,8 @@ public interface OSSFileService {
 
     OSSFile uploadFile(MultipartFile file, int userId, @Nullable String description);
     ResponseEntity<Resource> downloadFile(int userId, String filename);
-    // Configure it for shared files.
-    OSSFile downloadFile(String uri);
-    List<OSSFile> getDownloadedFiles(int userId);
+    ResponseEntity<Resource> downloadSharedFile(int userId, String filename);
+
+    List<OSSFile> listFiles(int userId);
+    List<OSSShared> listSharedFiles(int userId); // Check expired date.
 }
