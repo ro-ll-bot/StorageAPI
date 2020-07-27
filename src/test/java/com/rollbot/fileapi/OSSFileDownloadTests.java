@@ -34,7 +34,7 @@ public class OSSFileDownloadTests {
     private final String path = "C:\\Users\\k84167261\\Desktop\\personal\\questions.xlsx";
 
 
-    //@BeforeEach
+    @BeforeEach
     public void uploadFileToTestDownload(){
         /**
          * Upload a file to the server to test the download functionality.

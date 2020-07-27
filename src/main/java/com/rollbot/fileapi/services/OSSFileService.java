@@ -15,7 +15,7 @@ public interface OSSFileService {
 
     OSSFile uploadFile(MultipartFile file, int userId, @Nullable String description);
     ResponseEntity<Resource> downloadFile(int userId, String filename);
-    ResponseEntity<Resource> downloadSharedFile(int userId, String filename);
+    ResponseEntity<Resource> downloadSharedFile(int sharedUserId, int ownerUserId, String filename);
 
     List<OSSFile> listFiles(int userId);
     List<OSSShared> listSharedFiles(int userId); // Check expired date.

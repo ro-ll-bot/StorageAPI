@@ -103,6 +103,7 @@ public class OSSFileServiceImpl implements OSSFileService {
                 .description(description)
                 .mimeType(mimeType)
                 .build();
+
         logger.info("OSSFile built:" + ossFile.toString());
 
         fileRepository.save(ossFile);
@@ -110,51 +111,83 @@ public class OSSFileServiceImpl implements OSSFileService {
         return ossFile;
     }
 
-    @Override
-    public ResponseEntity<Resource> downloadFile(int userId, String filename) {
-        // find file
-        String fpath = new StringBuilder()
+    private String generateFilePathFromFilename(int userId, String filename){
+        return new StringBuilder()
                 .append(internalFilePath)
                 .append(createBucketIfNotExits(userId))
                 .append("/")
                 .append(filename)
                 .toString();
+    }
+
+    private ByteArrayResource generateByteArrayResource(String fpath) throws IOException{
+        byte[] bytes;
+        File f = new File(fpath);
+        // Print a response here, because the file exists in the database but it is not exists in directory.
+        if(!f.exists()) throw new IOException();
+        bytes = Files.readAllBytes(f.toPath());
+
+        ByteArrayResource resource = new ByteArrayResource(bytes);
+
+        return resource;
+    }
+
+    @Override
+    public ResponseEntity<Resource> downloadFile(int userId, String filename) {
+        // find file
+        String fpath = generateFilePathFromFilename(userId, filename);
 
         Optional<OSSFile> ossFileOptional = fileRepository.findByFilePath(fpath);
         if(!ossFileOptional.isPresent()) return ResponseEntity.notFound().build();
 
         OSSFile ossFile = ossFileOptional.get();
 
-        byte[] bytes;
-        // Check if file exists
-        File f = new File(fpath);
-        if(!f.exists()) return ResponseEntity.notFound().build();
-
+        ByteArrayResource resource = null;
         try {
-            bytes = Files.readAllBytes(f.toPath());
+            resource = generateByteArrayResource(fpath);
         } catch (IOException e) {
             e.printStackTrace();
             return ResponseEntity.notFound().build();
         }
 
-        ByteArrayResource resource = new ByteArrayResource(bytes);
-
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("content-disposition", "inline; filename=\""+ossFile.getName()+"\"");
-        httpHeaders.set("content-length", String.valueOf(f.length()));
+        httpHeaders.set("content-length", String.valueOf(ossFile.getSize()));
 
-        ResponseEntity<Resource> responseEntity = ResponseEntity.ok()
+        return ResponseEntity.ok()
                 .headers(httpHeaders)
-                .contentLength(f.length())
+                .contentLength(ossFile.getSize())
                 .contentType(MediaType.asMediaType(MimeType.valueOf(ossFile.getMimeType())))
                 .body(resource);
-
-        return responseEntity;
     }
 
     @Override
-    public ResponseEntity<Resource> downloadSharedFile(int userId, String filename) {
-        return null;
+    public ResponseEntity<Resource> downloadSharedFile(int sharedUserId, int ownerUserId, String filename) {
+        String fpath = generateFilePathFromFilename(ownerUserId, filename);
+        Optional<OSSShared> optionalOSSShared = shareRepository.findBySharedUserIdAndSharedFile_FilePath(sharedUserId, fpath);
+        if(!optionalOSSShared.isPresent()) return ResponseEntity.notFound().build();
+
+        OSSShared ossShared = optionalOSSShared.get();
+
+        ByteArrayResource resource = null;
+        try {
+            resource = generateByteArrayResource(fpath);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.notFound().build();
+        }
+
+        OSSFile ossFile = ossShared.getSharedFile();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("content-disposition", "inline; filename=\""+ ossFile.getName()+"\"");
+        httpHeaders.set("content-length", String.valueOf(ossFile.getSize()));
+
+        return ResponseEntity.ok()
+                .headers(httpHeaders)
+                .contentLength(ossFile.getSize())
+                .contentType(MediaType.asMediaType(MimeType.valueOf(ossFile.getMimeType())))
+                .body(resource);
     }
 
     @Override
