@@ -6,7 +6,6 @@ import com.rollbot.fileapi.entity.OSSShared;
 import com.rollbot.fileapi.services.OSSFileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +16,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("api/file-service/")
-public class FileController {
+public class OSSFileController {
 
     @Autowired private OSSFileService ossFileService;
 
