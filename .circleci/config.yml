@@ -6,6 +6,12 @@ jobs: # a collection of steps
 
     docker: # run the steps with Docker
       - image: circleci/openjdk:8u252-buster # ...with this image as the primary container; this is where all `steps` will run
+      - image: circleci/mysql:8.0.4
+        environment:
+          MYSQL_ROOT_PASSWORD: toor
+          MYSQL_DATABASE: demo
+          MYSQL_USER: toor
+          MYSQL_PASSWORD: root
 
     steps: # a collection of executable commands
 
