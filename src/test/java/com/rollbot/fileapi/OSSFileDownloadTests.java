@@ -31,7 +31,7 @@ public class OSSFileDownloadTests {
     private final HttpStatus status = HttpStatus.OK;
 
     private OSSFile ossFile = null;
-    private final String path = "";
+    private final String path = "storage/test/icon.png";
 
 
     @BeforeEach
