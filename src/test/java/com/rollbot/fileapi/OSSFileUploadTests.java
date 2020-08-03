@@ -38,7 +38,7 @@ public class OSSFileUploadTests {
   private String internalTestUploadFileDirectory = ossFileService.internalFilePath;
 
   // Absolute path for testing
-  private final String path = "C:\\Users\\bilgi\\Documents\\id_card.jpg";
+  private final String path = "storage/test/icon.png";
 
 
   @BeforeEach

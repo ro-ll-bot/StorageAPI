@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -25,13 +25,13 @@ public class OSSFileDownloadTests {
 
     @Autowired private OSSFileService ossFileService;
     private final int userId = 1;
-    private final String filename = "questions.xlsx";
+    private final String filename = "icon.png";
     private final String contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    private final String contentDisposition = "inline; filename=\"questions.xlsx\"";
+    private final String contentDisposition = "inline; filename=\"icon.png\"";
     private final HttpStatus status = HttpStatus.OK;
 
     private OSSFile ossFile = null;
-    private final String path = "C:\\Users\\k84167261\\Desktop\\personal\\questions.xlsx";
+    private final String path = "";
 
 
     @BeforeEach
