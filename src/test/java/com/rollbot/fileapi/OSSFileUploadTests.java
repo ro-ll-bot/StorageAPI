@@ -6,7 +6,6 @@ import com.rollbot.fileapi.entity.OSSFileTrustedTypes;
 import com.rollbot.fileapi.repositories.OSSFileRepository;
 import com.rollbot.fileapi.services.OSSFileService;
 
-import javafx.util.Pair;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,7 +38,7 @@ public class OSSFileUploadTests {
   private String internalTestUploadFileDirectory = ossFileService.internalFilePath;
 
   // Absolute path for testing
-  private final String path = "C:\\Users\\k84167261\\Desktop\\personal\\questions.xlsx";
+  private final String path = "C:\\Users\\bilgi\\Documents\\id_card.jpg";
 
 
   @BeforeEach

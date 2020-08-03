@@ -163,6 +163,12 @@ public class OSSFileServiceImpl implements OSSFileService {
 
     @Override
     public ResponseEntity<Resource> downloadSharedFile(int sharedUserId, int ownerUserId, String filename) {
+        return null;
+    }
+
+/*
+    @Override
+    public ResponseEntity<Resource> downloadSharedFile(int sharedUserId, int ownerUserId, String filename) {
         String fpath = generateFilePathFromFilename(ownerUserId, filename);
         Optional<OSSShared> optionalOSSShared = shareRepository.findBySharedUserIdAndSharedFile_FilePath(sharedUserId, fpath);
         if(!optionalOSSShared.isPresent()) return ResponseEntity.notFound().build();
@@ -189,7 +195,7 @@ public class OSSFileServiceImpl implements OSSFileService {
                 .contentType(MediaType.asMediaType(MimeType.valueOf(ossFile.getMimeType())))
                 .body(resource);
     }
-
+*/
     @Override
     public List<OSSFile> listFiles(int userId) {
         return fileRepository.findAllByUserId(userId);
