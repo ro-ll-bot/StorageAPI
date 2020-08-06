@@ -24,7 +24,7 @@ import java.io.IOException;
 
 
 @SpringBootTest
-@ComponentScan("com")
+@ComponentScan("fileapi")
 public class OSSFileDownloadTests {
 
     @Autowired private OSSFileService ossFileService;

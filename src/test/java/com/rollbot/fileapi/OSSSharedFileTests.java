@@ -29,10 +29,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@SpringBootTest
-@ComponentScan("com")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Transactional
+@SpringBootTest
+@ComponentScan("fileapi")
 public class OSSSharedFileTests {
 
 

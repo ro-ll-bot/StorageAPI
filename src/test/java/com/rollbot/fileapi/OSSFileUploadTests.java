@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 @SpringBootTest
-@ComponentScan("com")
+@ComponentScan("fileapi")
 public class OSSFileUploadTests {
 
 

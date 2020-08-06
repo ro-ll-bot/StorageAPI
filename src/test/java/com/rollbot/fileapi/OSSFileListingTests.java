@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
-@ComponentScan("com")
+@ComponentScan("fileapi")
 public class OSSFileListingTests {
 
     @Autowired
