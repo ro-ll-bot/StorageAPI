@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface OSSShareRepository extends JpaRepository<OSSShared, Integer> {
     List<OSSShared> findAllBySharedUserId(int sharedUserId);
-    //Optional<OSSShared> findBySharedUserIdAndSharedFile_FilePath(int sharedUserId, String sharedFile_path);
+    Optional<OSSShared> findBySharedUserIdAndSharedFile_FilePath(int sharedUserId, String sharedFile_path);
 }
