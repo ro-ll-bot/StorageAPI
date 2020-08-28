@@ -1,6 +1,7 @@
 package com.rollbot.fileapi.services;
 
 import com.rollbot.fileapi.entity.OSSFile;
+import com.rollbot.fileapi.entity.OSSFileShareInfo;
 import com.rollbot.fileapi.entity.OSSShared;
 import com.rollbot.fileapi.repositories.OSSFileRepository;
 import com.rollbot.fileapi.repositories.OSSShareRepository;
@@ -166,36 +167,65 @@ public class OSSFileServiceImpl implements OSSFileService {
         return null;
     }
 
-/*
     @Override
-    public ResponseEntity<Resource> downloadSharedFile(int sharedUserId, int ownerUserId, String filename) {
-        String fpath = generateFilePathFromFilename(ownerUserId, filename);
-        Optional<OSSShared> optionalOSSShared = shareRepository.findBySharedUserIdAndSharedFile_FilePath(sharedUserId, fpath);
-        if(!optionalOSSShared.isPresent()) return ResponseEntity.notFound().build();
+    public ResponseEntity<OSSShared> shareFile(OSSFileShareInfo shareInfo) {
+        /*
+        *
+        * First of all, we need to find the file which is sharing
+        * */
+        String filePath = generateFilePathFromFilename(shareInfo.getOwnerUserId(), shareInfo.getFilename());
+        Optional<OSSFile> optionalOssFileToShare = fileRepository.findByFilePath(filePath);
 
-        OSSShared ossShared = optionalOSSShared.get();
+        if(!optionalOssFileToShare.isPresent()) ResponseEntity.notFound().build();
 
-        ByteArrayResource resource = null;
-        try {
-            resource = generateByteArrayResource(fpath);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
+        OSSFile ossFileToShare = optionalOssFileToShare.get();
 
-        OSSFile ossFile = ossShared.getSharedFile();
+        // Share file with the specified user and the specified informations.
+        OSSShared.Builder ossSharedBuilder = new OSSShared.Builder(shareInfo.getSharedUserId(), ossFileToShare);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("content-disposition", "inline; filename=\""+ ossFile.getName()+"\"");
-        httpHeaders.set("content-length", String.valueOf(ossFile.getSize()));
+        if(shareInfo.getTitle() != null) ossSharedBuilder.addTitle(shareInfo.getTitle());
+        if(shareInfo.getDescription() != null) ossSharedBuilder.addDescription(shareInfo.getDescription());
+        if(shareInfo.getExpireTime() != null) ossSharedBuilder.expireTime(shareInfo.getExpireTime());
+        ossSharedBuilder.sendMail(shareInfo.sendMail());
 
-        return ResponseEntity.ok()
-                .headers(httpHeaders)
-                .contentLength(ossFile.getSize())
-                .contentType(MediaType.asMediaType(MimeType.valueOf(ossFile.getMimeType())))
-                .body(resource);
+        OSSShared ossShared = ossSharedBuilder.build();
+        shareRepository.save(ossShared);
+
+
+        return ResponseEntity.ok(ossShared);
     }
-*/
+
+
+    /*
+        @Override
+        public ResponseEntity<Resource> downloadSharedFile(int sharedUserId, int ownerUserId, String filename) {
+            String fpath = generateFilePathFromFilename(ownerUserId, filename);
+            Optional<OSSShared> optionalOSSShared = shareRepository.findBySharedUserIdAndSharedFile_FilePath(sharedUserId, fpath);
+            if(!optionalOSSShared.isPresent()) return ResponseEntity.notFound().build();
+
+            OSSShared ossShared = optionalOSSShared.get();
+
+            ByteArrayResource resource = null;
+            try {
+                resource = generateByteArrayResource(fpath);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return ResponseEntity.notFound().build();
+            }
+
+            OSSFile ossFile = ossShared.getSharedFile();
+
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set("content-disposition", "inline; filename=\""+ ossFile.getName()+"\"");
+            httpHeaders.set("content-length", String.valueOf(ossFile.getSize()));
+
+            return ResponseEntity.ok()
+                    .headers(httpHeaders)
+                    .contentLength(ossFile.getSize())
+                    .contentType(MediaType.asMediaType(MimeType.valueOf(ossFile.getMimeType())))
+                    .body(resource);
+        }
+    */
     @Override
     public List<OSSFile> listFiles(int userId) {
         return fileRepository.findAllByUserId(userId);

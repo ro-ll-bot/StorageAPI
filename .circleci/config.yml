@@ -12,6 +12,9 @@ jobs: # a collection of steps
           MYSQL_DATABASE: demo
           MYSQL_USER: toor
           MYSQL_PASSWORD: root
+      - volumes:
+          - ./storage/oss/files/
+          - ./storage/test/
 
     steps: # a collection of executable commands
 

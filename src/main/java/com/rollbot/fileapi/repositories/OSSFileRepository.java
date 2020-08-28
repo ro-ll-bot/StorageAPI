@@ -18,4 +18,7 @@ public interface OSSFileRepository extends JpaRepository<OSSFile, Integer> {
   // a little bit of information.
   // Also find non-expired files.
   //List<OSSFile> sharedFileWithUserInformation();
+
+  // Maybe it is not a need because all file paths are unique.
+  Optional<OSSFile> findByUserIdAndFilePath(int userId, String filePath);
 }
